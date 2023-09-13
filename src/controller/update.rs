@@ -1,7 +1,6 @@
-use term2d::{
-    model::{event::Event, key::Key},
-    App,
-};
+use term2d::model::event::Event;
+use term2d::model::key::Key;
+use term2d::App;
 
 use crate::model::init::Model;
 

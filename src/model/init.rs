@@ -1,4 +1,5 @@
-use term2d::{model::point::Point, App};
+use term2d::model::point::Point;
+use term2d::App;
 
 pub struct Model {
     pub pixel_point: Point,
