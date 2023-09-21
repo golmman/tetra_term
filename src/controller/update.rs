@@ -19,6 +19,9 @@ pub fn update_model(app: &App, model: &mut Model, event: Event) -> bool {
                 }
                 model.debug += 1;
             }
+            Key::Char('r') => {
+                model.tetromino.rotate();
+            }
             _ => {}
         },
         Event::Resize(_) => {}

@@ -5,20 +5,66 @@ use term2d::view::canvas::Canvas;
 use super::tetromino::Tetromino;
 
 pub struct TetrominoJ {
+    color: Rgba,
     position: Point,
+    rotation: u8,
 }
 
 impl TetrominoJ {
     pub fn new() -> Self {
         Self {
-            position: Point::new(0, 0),
+            color: Rgba::red(),
+            position: Point::new(40, 5),
+            rotation: 0,
         }
     }
 }
 
 impl Tetromino for TetrominoJ {
     fn draw(&self, canvas: &mut term2d::view::canvas::halfblock::HalfblockCanvas) {
-        canvas.draw_pixel(&Point::new(51, 7), &Rgba::blue());
+        match self.rotation {
+            0 => {
+                let a = &self.position.right();
+                let b = &a.down();
+                let c = &b.down();
+                let d = &c.left();
+                canvas.draw_pixel(a, &self.color);
+                canvas.draw_pixel(b, &self.color);
+                canvas.draw_pixel(c, &self.color);
+                canvas.draw_pixel(d, &self.color);
+            }
+            1 => {
+                let a = &self.position;
+                let b = &a.down();
+                let c = &b.right();
+                let d = &c.right();
+                canvas.draw_pixel(a, &self.color);
+                canvas.draw_pixel(b, &self.color);
+                canvas.draw_pixel(c, &self.color);
+                canvas.draw_pixel(d, &self.color);
+            }
+            2 => {
+                let a = &self.position;
+                let b = &a.right();
+                let c = &a.down();
+                let d = &c.down();
+                canvas.draw_pixel(a, &self.color);
+                canvas.draw_pixel(b, &self.color);
+                canvas.draw_pixel(c, &self.color);
+                canvas.draw_pixel(d, &self.color);
+            }
+            3 => {
+                let a = &self.position;
+                let b = &a.right();
+                let c = &b.right();
+                let d = &c.down();
+                canvas.draw_pixel(a, &self.color);
+                canvas.draw_pixel(b, &self.color);
+                canvas.draw_pixel(c, &self.color);
+                canvas.draw_pixel(d, &self.color);
+            }
+            _ => panic!("illegal rotation value"),
+        }
     }
 
     fn drop(&mut self) {
@@ -42,6 +88,9 @@ impl Tetromino for TetrominoJ {
     }
 
     fn rotate(&mut self) {
-        todo!()
+        self.rotation += 1;
+        if self.rotation > 3 {
+            self.rotation = 0;
+        }
     }
 }
