@@ -3,19 +3,22 @@ use term2d::model::rgba::Rgba;
 use term2d::view::canvas::Canvas;
 
 use super::tetromino::Tetromino;
+use super::well::Well;
 
 pub struct TetrominoI {
     color: Rgba,
     position: Point,
     rotation: u8,
+    well: Well,
 }
 
 impl TetrominoI {
-    pub fn new() -> Self {
+    pub fn new(well: Well) -> Self {
         Self {
             color: Rgba::green(),
             position: Point::new(50, 5),
             rotation: 0,
+            well,
         }
     }
 }
@@ -72,25 +75,35 @@ impl Tetromino for TetrominoI {
     }
 
     fn is_falling(&self) -> bool {
-        todo!()
+        true
     }
 
     fn move_left(&mut self) {
-        todo!()
+        self.position.x -= 1;
     }
 
     fn move_right(&mut self) {
-        todo!()
+        self.position.x += 1;
     }
 
     fn move_down(&mut self) {
-        todo!()
+        self.position.y += 1;
     }
 
     fn rotate(&mut self) {
         self.rotation += 1;
         if self.rotation > 3 {
             self.rotation = 0;
+        }
+
+        if self.rotation == 0 || self.rotation == 2 {
+            self.position.x += 2;
+            self.position.y -= 1;
+        }
+
+        if self.rotation == 1 || self.rotation == 3 {
+            self.position.x -= 2;
+            self.position.y += 1;
         }
     }
 }

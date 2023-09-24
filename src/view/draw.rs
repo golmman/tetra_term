@@ -45,9 +45,6 @@ fn draw_well(model: &Model, canvas: &mut HalfblockCanvas) {
         canvas.draw_char(&Point::new(w + 6, y * 2), color_text, '\u{2502}');
     }
 
-    canvas.draw_line(&Point::new(1, 5), &Point::new(10, 5), &Rgba::yellow());
-    canvas.draw_line(&Point::new(5, 2), &Point::new(5, 21), &Rgba::yellow());
-
     canvas.draw_char(&Point::new(0, 0), color_text, '\u{250C}');
     canvas.draw_char(&Point::new(w + 6, 0), color_text, '\u{2510}');
 

@@ -8,3 +8,4 @@ pub mod tetromino_o;
 pub mod tetromino_s;
 pub mod tetromino_t;
 pub mod tetromino_z;
+pub mod well;
