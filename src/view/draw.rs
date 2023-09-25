@@ -6,12 +6,15 @@ use term2d::view::canvas::Canvas;
 use term2d::App;
 
 use crate::model::constants::WELL_HEIGHT;
+use crate::model::constants::WELL_LEFT;
+use crate::model::constants::WELL_TOP;
 use crate::model::constants::WELL_WIDTH;
 use crate::model::init::Model;
 
 pub fn draw_model(app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
     canvas.clear();
 
+    draw_frame(model, canvas);
     draw_well(model, canvas);
     draw_tetromino(model, canvas);
 
@@ -27,11 +30,11 @@ fn draw_tetromino(model: &Model, canvas: &mut HalfblockCanvas) {
     model.tetromino.draw(canvas);
 }
 
-fn draw_well(model: &Model, canvas: &mut HalfblockCanvas) {
+fn draw_frame(model: &Model, canvas: &mut HalfblockCanvas) {
     // see code page 437 for character codes
 
-    let w = WELL_WIDTH;
-    let h = WELL_HEIGHT;
+    let w = model.well.width;
+    let h = model.well.height;
     let color_text = &Color::text();
 
     for x in 1..w + 6 {
@@ -53,4 +56,15 @@ fn draw_well(model: &Model, canvas: &mut HalfblockCanvas) {
 
     canvas.draw_char(&Point::new(0, h + 3), color_text, '\u{2514}');
     canvas.draw_char(&Point::new(w + 6, h + 3), color_text, '\u{2518}');
+}
+
+fn draw_well(model: &Model, canvas: &mut HalfblockCanvas) {
+    for y in 0..model.well.height {
+        for x in 0..model.well.width {
+            let i = (model.well.width * y + x) as usize;
+            if let Some(color) = &model.well.colors[i] {
+                canvas.draw_pixel(&Point::new(x + WELL_LEFT, y + WELL_TOP), color);
+            }
+        }
+    }
 }

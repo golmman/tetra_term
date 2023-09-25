@@ -2,6 +2,8 @@ use term2d::model::point::Point;
 use term2d::model::rgba::Rgba;
 use term2d::view::canvas::Canvas;
 
+use super::constants::WELL_LEFT;
+use super::constants::WELL_TOP;
 use super::tetromino::Tetromino;
 use super::well::Well;
 
@@ -16,10 +18,28 @@ impl TetrominoI {
     pub fn new(well: Well) -> Self {
         Self {
             color: Rgba::green(),
-            position: Point::new(50, 5),
+            position: Point::new(4, 3),
             rotation: 0,
             well,
         }
+    }
+
+    fn is_collision(&self) -> bool {
+        if self.rotation == 0 || self.rotation == 2 {
+            if self.position.x < WELL_LEFT {
+                return true;
+            }
+            if self.position.x >= WELL_LEFT + self.well.width {
+                return true;
+            }
+            if self.position.y >= WELL_TOP + self.well.height - 3 {
+                return true;
+            }
+        }
+
+        if self.rotation == 1 || self.rotation == 3 {}
+
+        false
     }
 }
 
@@ -80,14 +100,23 @@ impl Tetromino for TetrominoI {
 
     fn move_left(&mut self) {
         self.position.x -= 1;
+        if self.is_collision() {
+            self.position.x += 1;
+        }
     }
 
     fn move_right(&mut self) {
         self.position.x += 1;
+        if self.is_collision() {
+            self.position.x -= 1;
+        }
     }
 
     fn move_down(&mut self) {
         self.position.y += 1;
+        if self.is_collision() {
+            self.position.y -= 1;
+        }
     }
 
     fn rotate(&mut self) {

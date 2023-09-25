@@ -1,8 +1,5 @@
-use term2d::model::color::Color;
 use term2d::App;
 
-use super::constants::WELL_HEIGHT;
-use super::constants::WELL_WIDTH;
 use super::tetromino::Tetromino;
 use super::tetromino_i::TetrominoI;
 use super::well::Well;
@@ -14,7 +11,8 @@ pub struct Model {
 }
 
 pub fn init_model(_app: &App) -> Model {
-    let well = Well::new(10, 20);
+    //let well = Well::new(10, 20);
+    let well = Well::new_debug();
 
     Model {
         debug: 0,
