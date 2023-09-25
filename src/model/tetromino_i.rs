@@ -35,9 +35,45 @@ impl TetrominoI {
             if self.position.y >= WELL_TOP + self.well.height - 3 {
                 return true;
             }
+
+            let p0 = &Point::new(self.position.x - WELL_LEFT, self.position.y - WELL_TOP);
+            let p1 = &p0.down();
+            let p2 = &p1.down();
+            let p3 = &p2.down();
+            let ps = vec![p0, p1, p2, p3];
+
+            for p in ps {
+                let i = (self.well.width * p.y + p.x) as usize;
+                if self.well.colors[i].is_some() {
+                    return true;
+                }
+            }
         }
 
-        if self.rotation == 1 || self.rotation == 3 {}
+        if self.rotation == 1 || self.rotation == 3 {
+            if self.position.x < WELL_LEFT {
+                return true;
+            }
+            if self.position.x >= WELL_LEFT + self.well.width - 3 {
+                return true;
+            }
+            if self.position.y >= WELL_TOP + self.well.height {
+                return true;
+            }
+
+            let p0 = &Point::new(self.position.x - WELL_LEFT, self.position.y - WELL_TOP);
+            let p1 = &p0.right();
+            let p2 = &p1.right();
+            let p3 = &p2.right();
+            let ps = vec![p0, p1, p2, p3];
+
+            for p in ps {
+                let i = (self.well.width * p.y + p.x) as usize;
+                if self.well.colors[i].is_some() {
+                    return true;
+                }
+            }
+        }
 
         false
     }
