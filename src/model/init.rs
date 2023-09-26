@@ -6,16 +6,18 @@ use super::well::Well;
 
 pub struct Model {
     pub debug: i32,
+    pub random: u64,
     pub tetromino: Tetromino,
     pub well: Well,
 }
 
 pub fn init_model(_app: &App) -> Model {
-    //let well = Well::new(10, 20);
-    let well = Well::new_debug();
+    let well = Well::new(10, 20);
+    //let well = Well::new_debug();
 
     Model {
         debug: 0,
+        random: 123,
         tetromino: Tetromino::new(TetrominoKind::I, well.clone()),
         well,
     }

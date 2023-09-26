@@ -16,6 +16,21 @@ pub enum TetrominoKind {
     Z,
 }
 
+impl From<u64> for TetrominoKind {
+    fn from(value: u64) -> Self {
+        match value % 7 {
+            0 => TetrominoKind::I,
+            1 => TetrominoKind::J,
+            2 => TetrominoKind::L,
+            3 => TetrominoKind::O,
+            4 => TetrominoKind::S,
+            5 => TetrominoKind::T,
+            6 => TetrominoKind::Z,
+            _ => panic!(),
+        }
+    }
+}
+
 pub struct Tetromino {
     color: Rgba,
     kind: TetrominoKind,
@@ -35,7 +50,7 @@ impl Tetromino {
         }
     }
 
-    fn get_tetromino_points(&self) -> [Point; 4] {
+    pub fn get_tetromino_points(&self) -> [Point; 4] {
         match self.kind {
             TetrominoKind::I => self.get_i_points(),
             TetrominoKind::J => self.get_j_points(),
@@ -277,11 +292,14 @@ impl Tetromino {
         }
     }
 
-    pub fn move_down(&mut self) {
+    pub fn move_down(&mut self) -> bool {
         self.position.y += 1;
         if self.is_collision() {
             self.position.y -= 1;
+            return true;
         }
+
+        false
     }
 
     pub fn rotate(&mut self) {
