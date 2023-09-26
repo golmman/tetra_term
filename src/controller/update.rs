@@ -3,6 +3,7 @@ use term2d::model::key::Key;
 use term2d::App;
 
 use crate::model::init::Model;
+use crate::model::tetromino::{TetrominoKind, Tetromino2};
 use crate::model::tetromino_i::TetrominoI;
 use crate::model::tetromino_j::TetrominoJ;
 
@@ -18,9 +19,9 @@ pub fn update_model(_app: &App, model: &mut Model, event: Event) -> bool {
 
             Key::Char('w') => {
                 if model.debug % 2 == 0 {
-                    model.tetromino = Box::new(TetrominoJ::new(model.well.clone()));
+                    model.tetromino = Tetromino2::new(TetrominoKind::J, model.well.clone());
                 } else {
-                    model.tetromino = Box::new(TetrominoI::new(model.well.clone()));
+                    model.tetromino = Tetromino2::new(TetrominoKind::I, model.well.clone());
                 }
                 model.debug += 1;
             }

@@ -27,14 +27,14 @@ impl TetrominoI {
     fn get_tetromino_points(&self) -> [Point; 4] {
         match self.rotation {
             0 | 2 => {
-                let a = self.position.clone();
+                let a = self.position.up();
                 let b = a.down();
                 let c = b.down();
                 let d = c.down();
                 return [a, b, c, d];
             }
             1 | 3 => {
-                let a = self.position.clone();
+                let a = self.position.left();
                 let b = a.right();
                 let c = b.right();
                 let d = c.right();
@@ -110,26 +110,14 @@ impl Tetromino for TetrominoI {
 
     fn rotate(&mut self) {
         let old_rotation = self.rotation;
-        let old_position = self.position.clone();
 
         self.rotation += 1;
         if self.rotation > 3 {
             self.rotation = 0;
         }
 
-        if self.rotation == 0 || self.rotation == 2 {
-            self.position.x += 2;
-            self.position.y -= 1;
-        }
-
-        if self.rotation == 1 || self.rotation == 3 {
-            self.position.x -= 2;
-            self.position.y += 1;
-        }
-
         if self.is_collision() {
             self.rotation = old_rotation;
-            self.position = old_position;
         }
     }
 }
