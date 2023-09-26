@@ -1,12 +1,12 @@
 use term2d::App;
 
-use super::tetromino::{Tetromino, Tetromino2, TetrominoKind};
-use super::tetromino_i::TetrominoI;
+use super::tetromino::Tetromino;
+use super::tetromino::TetrominoKind;
 use super::well::Well;
 
 pub struct Model {
     pub debug: i32,
-    pub tetromino: Tetromino2,
+    pub tetromino: Tetromino,
     pub well: Well,
 }
 
@@ -16,7 +16,7 @@ pub fn init_model(_app: &App) -> Model {
 
     Model {
         debug: 0,
-        tetromino: Tetromino2::new(TetrominoKind::I, well.clone()),
+        tetromino: Tetromino::new(TetrominoKind::I, well.clone()),
         well,
     }
 }

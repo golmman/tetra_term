@@ -1,17 +1,14 @@
 use term2d::model::color::Color;
 use term2d::model::point::Point;
-use term2d::model::rgba::Rgba;
 use term2d::view::canvas::halfblock::HalfblockCanvas;
 use term2d::view::canvas::Canvas;
 use term2d::App;
 
-use crate::model::constants::WELL_HEIGHT;
 use crate::model::constants::WELL_LEFT;
 use crate::model::constants::WELL_TOP;
-use crate::model::constants::WELL_WIDTH;
 use crate::model::init::Model;
 
-pub fn draw_model(app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
+pub fn draw_model(_app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
     canvas.clear();
 
     draw_frame(model, canvas);

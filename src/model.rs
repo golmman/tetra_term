@@ -1,11 +1,4 @@
 pub mod constants;
 pub mod init;
 pub mod tetromino;
-pub mod tetromino_i;
-pub mod tetromino_j;
-pub mod tetromino_l;
-pub mod tetromino_o;
-pub mod tetromino_s;
-pub mod tetromino_t;
-pub mod tetromino_z;
 pub mod well;

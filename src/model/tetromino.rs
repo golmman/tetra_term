@@ -6,16 +6,6 @@ use term2d::view::canvas::halfblock::HalfblockCanvas;
 use super::constants::{WELL_LEFT, WELL_TOP};
 use super::well::Well;
 
-pub trait Tetromino {
-    fn draw(&self, canvas: &mut HalfblockCanvas);
-    fn drop(&mut self);
-    fn is_falling(&self) -> bool;
-    fn move_left(&mut self);
-    fn move_right(&mut self);
-    fn move_down(&mut self);
-    fn rotate(&mut self);
-}
-
 pub enum TetrominoKind {
     I,
     J,
@@ -26,7 +16,7 @@ pub enum TetrominoKind {
     Z,
 }
 
-pub struct Tetromino2 {
+pub struct Tetromino {
     color: Rgba,
     kind: TetrominoKind,
     position: Point,
@@ -34,7 +24,7 @@ pub struct Tetromino2 {
     well: Well,
 }
 
-impl Tetromino2 {
+impl Tetromino {
     pub fn new(kind: TetrominoKind, well: Well) -> Self {
         Self {
             color: Rgba::green(),
