@@ -136,39 +136,90 @@ impl Tetromino {
     }
 
     fn get_o_points(&self) -> [Point; 4] {
-        [
-            Point::new(0, 0),
-            Point::new(0, 0),
-            Point::new(0, 0),
-            Point::new(0, 0),
-        ]
+        match self.rotation {
+            0 | 1 | 2 | 3 => {
+                let a = self.position.clone();
+                let b = a.right();
+                let c = b.down();
+                let d = c.left();
+                return [a, b, c, d];
+            }
+            _ => panic!("illegal rotation value: {}", self.rotation),
+        }
     }
 
     fn get_s_points(&self) -> [Point; 4] {
-        [
-            Point::new(0, 0),
-            Point::new(0, 0),
-            Point::new(0, 0),
-            Point::new(0, 0),
-        ]
+        match self.rotation {
+            0 | 2 => {
+                let a = self.position.right();
+                let b = a.left();
+                let c = b.down();
+                let d = c.left();
+                return [a, b, c, d];
+            }
+            1 | 3 => {
+                let a = self.position.up();
+                let b = a.down();
+                let c = b.right();
+                let d = c.down();
+                return [a, b, c, d];
+            }
+            _ => panic!("illegal rotation value: {}", self.rotation),
+        }
     }
 
     fn get_t_points(&self) -> [Point; 4] {
-        [
-            Point::new(0, 0),
-            Point::new(0, 0),
-            Point::new(0, 0),
-            Point::new(0, 0),
-        ]
+        match self.rotation {
+            0 => {
+                let a = self.position.down();
+                let b = a.up();
+                let c = b.left();
+                let d = b.right();
+                return [a, b, c, d];
+            }
+            1 => {
+                let a = self.position.left();
+                let b = a.right();
+                let c = b.up();
+                let d = b.down();
+                return [a, b, c, d];
+            }
+            2 => {
+                let a = self.position.up();
+                let b = a.down();
+                let c = b.right();
+                let d = b.left();
+                return [a, b, c, d];
+            }
+            3 => {
+                let a = self.position.right();
+                let b = a.left();
+                let c = b.down();
+                let d = b.up();
+                return [a, b, c, d];
+            }
+            _ => panic!("illegal rotation value: {}", self.rotation),
+        }
     }
 
     fn get_z_points(&self) -> [Point; 4] {
-        [
-            Point::new(0, 0),
-            Point::new(0, 0),
-            Point::new(0, 0),
-            Point::new(0, 0),
-        ]
+        match self.rotation {
+            0 | 2 => {
+                let a = self.position.left();
+                let b = a.right();
+                let c = b.down();
+                let d = c.right();
+                return [a, b, c, d];
+            }
+            1 | 3 => {
+                let a = self.position.up();
+                let b = a.down();
+                let c = b.left();
+                let d = c.down();
+                return [a, b, c, d];
+            }
+            _ => panic!("illegal rotation value: {}", self.rotation),
+        }
     }
 
     fn is_collision(&self) -> bool {
