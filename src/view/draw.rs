@@ -10,16 +10,9 @@ use crate::model::init::Model;
 
 pub fn draw_model(_app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
     canvas.clear();
-
     draw_frame(model, canvas);
     draw_well(model, canvas);
     draw_tetromino(model, canvas);
-
-    //canvas.draw_text(
-    //    &Point::new(0, 0),
-    //    &Color::text(),
-    //    &format!("press 'q' to quit, frame: {}", app.frame_count),
-    //);
     canvas.display();
 }
 

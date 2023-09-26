@@ -70,28 +70,28 @@ impl Tetromino {
     fn get_j_points(&self) -> [Point; 4] {
         match self.rotation {
             0 => {
-                let a = self.position.right();
+                let a = self.position.up();
                 let b = a.down();
                 let c = b.down();
                 let d = c.left();
                 return [a, b, c, d];
             }
             1 => {
-                let a = self.position.clone();
-                let b = a.down();
-                let c = b.right();
-                let d = c.right();
+                let a = self.position.right();
+                let b = a.left();
+                let c = b.left();
+                let d = c.up();
                 return [a, b, c, d];
             }
             2 => {
-                let a = self.position.clone();
-                let b = a.right();
-                let c = a.down();
-                let d = c.down();
+                let a = self.position.down();
+                let b = a.up();
+                let c = b.up();
+                let d = c.right();
                 return [a, b, c, d];
             }
             3 => {
-                let a = self.position.clone();
+                let a = self.position.left();
                 let b = a.right();
                 let c = b.right();
                 let d = c.down();
@@ -102,12 +102,37 @@ impl Tetromino {
     }
 
     fn get_l_points(&self) -> [Point; 4] {
-        [
-            Point::new(0, 0),
-            Point::new(0, 0),
-            Point::new(0, 0),
-            Point::new(0, 0),
-        ]
+        match self.rotation {
+            0 => {
+                let a = self.position.up();
+                let b = a.down();
+                let c = b.down();
+                let d = c.right();
+                return [a, b, c, d];
+            }
+            1 => {
+                let a = self.position.right();
+                let b = a.left();
+                let c = b.left();
+                let d = c.down();
+                return [a, b, c, d];
+            }
+            2 => {
+                let a = self.position.down();
+                let b = a.up();
+                let c = b.up();
+                let d = c.left();
+                return [a, b, c, d];
+            }
+            3 => {
+                let a = self.position.left();
+                let b = a.right();
+                let c = b.right();
+                let d = c.up();
+                return [a, b, c, d];
+            }
+            _ => panic!("illegal rotation value: {}", self.rotation),
+        }
     }
 
     fn get_o_points(&self) -> [Point; 4] {
