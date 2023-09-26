@@ -24,54 +24,45 @@ impl TetrominoI {
         }
     }
 
-    fn is_collision(&self) -> bool {
-        if self.rotation == 0 || self.rotation == 2 {
-            if self.position.x < WELL_LEFT {
-                return true;
+    fn get_tetromino_points(&self) -> [Point; 4] {
+        match self.rotation {
+            0 | 2 => {
+                let a = self.position.clone();
+                let b = a.down();
+                let c = b.down();
+                let d = c.down();
+                return [a, b, c, d];
             }
-            if self.position.x >= WELL_LEFT + self.well.width {
-                return true;
+            1 | 3 => {
+                let a = self.position.clone();
+                let b = a.right();
+                let c = b.right();
+                let d = c.right();
+                return [a, b, c, d];
             }
-            if self.position.y >= WELL_TOP + self.well.height - 3 {
-                return true;
-            }
-
-            let p0 = &Point::new(self.position.x - WELL_LEFT, self.position.y - WELL_TOP);
-            let p1 = &p0.down();
-            let p2 = &p1.down();
-            let p3 = &p2.down();
-            let ps = vec![p0, p1, p2, p3];
-
-            for p in ps {
-                let i = (self.well.width * p.y + p.x) as usize;
-                if self.well.colors[i].is_some() {
-                    return true;
-                }
-            }
+            _ => panic!("illegal rotation value: {}", self.rotation),
         }
+    }
 
-        if self.rotation == 1 || self.rotation == 3 {
-            if self.position.x < WELL_LEFT {
+    fn is_collision(&self) -> bool {
+        let ps = self.get_tetromino_points();
+
+        for p in ps {
+            let i = (self.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
+            if self.well.colors[i].is_some() {
                 return true;
             }
-            if self.position.x >= WELL_LEFT + self.well.width - 3 {
-                return true;
-            }
-            if self.position.y >= WELL_TOP + self.well.height {
+
+            if p.x < WELL_LEFT {
                 return true;
             }
 
-            let p0 = &Point::new(self.position.x - WELL_LEFT, self.position.y - WELL_TOP);
-            let p1 = &p0.right();
-            let p2 = &p1.right();
-            let p3 = &p2.right();
-            let ps = vec![p0, p1, p2, p3];
+            if p.x >= WELL_LEFT + self.well.width {
+                return true;
+            }
 
-            for p in ps {
-                let i = (self.well.width * p.y + p.x) as usize;
-                if self.well.colors[i].is_some() {
-                    return true;
-                }
+            if p.y >= WELL_TOP + self.well.height {
+                return true;
             }
         }
 
@@ -81,49 +72,11 @@ impl TetrominoI {
 
 impl Tetromino for TetrominoI {
     fn draw(&self, canvas: &mut term2d::view::canvas::halfblock::HalfblockCanvas) {
-        match self.rotation {
-            0 => {
-                let a = &self.position;
-                let b = &a.down();
-                let c = &b.down();
-                let d = &c.down();
-                canvas.draw_pixel(a, &self.color);
-                canvas.draw_pixel(b, &self.color);
-                canvas.draw_pixel(c, &self.color);
-                canvas.draw_pixel(d, &self.color);
-            }
-            1 => {
-                let a = &self.position;
-                let b = &a.right();
-                let c = &b.right();
-                let d = &c.right();
-                canvas.draw_pixel(a, &self.color);
-                canvas.draw_pixel(b, &self.color);
-                canvas.draw_pixel(c, &self.color);
-                canvas.draw_pixel(d, &self.color);
-            }
-            2 => {
-                let a = &self.position;
-                let b = &a.down();
-                let c = &b.down();
-                let d = &c.down();
-                canvas.draw_pixel(a, &self.color);
-                canvas.draw_pixel(b, &self.color);
-                canvas.draw_pixel(c, &self.color);
-                canvas.draw_pixel(d, &self.color);
-            }
-            3 => {
-                let a = &self.position;
-                let b = &a.right();
-                let c = &b.right();
-                let d = &c.right();
-                canvas.draw_pixel(a, &self.color);
-                canvas.draw_pixel(b, &self.color);
-                canvas.draw_pixel(c, &self.color);
-                canvas.draw_pixel(d, &self.color);
-            }
-            _ => panic!("illegal rotation value"),
-        }
+        let ps = self.get_tetromino_points();
+        canvas.draw_pixel(&ps[0], &self.color);
+        canvas.draw_pixel(&ps[1], &self.color);
+        canvas.draw_pixel(&ps[2], &self.color);
+        canvas.draw_pixel(&ps[3], &self.color);
     }
 
     fn drop(&mut self) {
