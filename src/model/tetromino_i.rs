@@ -109,6 +109,9 @@ impl Tetromino for TetrominoI {
     }
 
     fn rotate(&mut self) {
+        let old_rotation = self.rotation;
+        let old_position = self.position.clone();
+
         self.rotation += 1;
         if self.rotation > 3 {
             self.rotation = 0;
@@ -122,6 +125,11 @@ impl Tetromino for TetrominoI {
         if self.rotation == 1 || self.rotation == 3 {
             self.position.x -= 2;
             self.position.y += 1;
+        }
+
+        if self.is_collision() {
+            self.rotation = old_rotation;
+            self.position = old_position;
         }
     }
 }

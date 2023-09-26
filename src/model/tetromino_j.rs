@@ -3,19 +3,57 @@ use term2d::model::rgba::Rgba;
 use term2d::view::canvas::Canvas;
 
 use super::tetromino::Tetromino;
+use super::well::Well;
 
 pub struct TetrominoJ {
     color: Rgba,
     position: Point,
     rotation: u8,
+    well: Well,
 }
 
 impl TetrominoJ {
-    pub fn new() -> Self {
+    pub fn new(well: Well) -> Self {
         Self {
             color: Rgba::red(),
-            position: Point::new(40, 5),
+            position: Point::new(4, 3),
             rotation: 0,
+            well,
+        }
+    }
+
+
+    fn get_tetromino_points(&self) -> [Point; 4] {
+        match self.rotation {
+            0 => {
+                let a = self.position.right();
+                let b = a.down();
+                let c = b.down();
+                let d = c.left();
+                return [a, b, c, d];
+            }
+            1 => {
+                let a = self.position.clone();
+                let b = a.down();
+                let c = b.right();
+                let d = c.right();
+                return [a, b, c, d];
+            }
+            2 => {
+                let a = self.position.clone();
+                let b = a.right();
+                let c = a.down();
+                let d = c.down();
+                return [a, b, c, d];
+            }
+            3 => {
+                let a = self.position.clone();
+                let b = a.right();
+                let c = b.right();
+                let d = c.down();
+                return [a, b, c, d];
+            }
+            _ => panic!("illegal rotation value: {}", self.rotation),
         }
     }
 }

@@ -18,7 +18,7 @@ pub fn update_model(_app: &App, model: &mut Model, event: Event) -> bool {
 
             Key::Char('w') => {
                 if model.debug % 2 == 0 {
-                    model.tetromino = Box::new(TetrominoJ::new());
+                    model.tetromino = Box::new(TetrominoJ::new(model.well.clone()));
                 } else {
                     model.tetromino = Box::new(TetrominoI::new(model.well.clone()));
                 }
