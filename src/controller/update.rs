@@ -68,7 +68,7 @@ fn move_tetromino_down(model: &mut Model) {
         }
 
         // delete full rows
-        model.well.delete_full_rows();
+        model.score += model.well.delete_full_rows();
 
         // set new tetromino
         model.random = (A * model.random + C) % M;

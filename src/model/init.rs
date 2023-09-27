@@ -8,6 +8,7 @@ pub struct Model {
     pub debug: i32,
     pub gravity: u64,
     pub random: u64,
+    pub score: u32,
     pub tetromino: Tetromino,
     pub well: Well,
 }
@@ -20,6 +21,7 @@ pub fn init_model(_app: &App) -> Model {
         debug: 0,
         gravity: 10,
         random: 7,
+        score: 0,
         tetromino: Tetromino::new(TetrominoKind::I, well.clone()),
         well,
     }
