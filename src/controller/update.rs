@@ -30,6 +30,8 @@ pub fn update_model(app: &App, model: &mut Model, event: Event) -> bool {
                 move_tetromino_down(model);
             }
 
+            Key::Char('R') => model.reset(app),
+
             Key::Char('p') => {
                 model.debug += 1;
                 match model.debug % 7 {
@@ -69,6 +71,9 @@ fn move_tetromino_down(model: &mut Model) {
 
         // delete full rows
         model.score += model.well.delete_full_rows();
+
+        // update gravity
+        model.gravity = (10 - model.score as i32 / 10).max(1) as u64;
 
         // set new tetromino
         model.random = (A * model.random + C) % M;

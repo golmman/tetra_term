@@ -13,6 +13,18 @@ pub struct Model {
     pub well: Well,
 }
 
+impl Model {
+    pub fn reset(&mut self, app: &App) {
+        let m = init_model(app);
+        self.debug = m.debug;
+        self.gravity = m.gravity;
+        self.random = m.random;
+        self.score = m.score;
+        self.tetromino = m.tetromino;
+        self.well = m.well;
+    }
+}
+
 pub fn init_model(_app: &App) -> Model {
     let well = Well::new(10, 20);
     //let well = Well::new_debug();
