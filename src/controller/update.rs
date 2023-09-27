@@ -26,10 +26,13 @@ pub fn update_model(_app: &App, model: &mut Model, event: Event) -> bool {
                     for p in ps {
                         let i = (model.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
                         model.well.colors[i] = Some(Rgba::red());
-                        model.random = (A * model.random + C) % M;
-                        model.tetromino =
-                            Tetromino::new(TetrominoKind::from(model.random), model.well.clone());
                     }
+
+                    model.well.delete_full_rows();
+
+                    model.random = (A * model.random + C) % M;
+                    model.tetromino =
+                        Tetromino::new(TetrominoKind::from(model.random), model.well.clone());
                 }
             }
             Key::Char('a') | Key::Char('h') | Key::Left => model.tetromino.move_left(),

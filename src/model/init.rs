@@ -17,7 +17,7 @@ pub fn init_model(_app: &App) -> Model {
 
     Model {
         debug: 0,
-        random: 123,
+        random: 7,
         tetromino: Tetromino::new(TetrominoKind::I, well.clone()),
         well,
     }

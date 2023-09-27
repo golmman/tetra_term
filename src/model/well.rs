@@ -50,4 +50,35 @@ impl Well {
             height: 20,
         }
     }
+
+    pub fn delete_full_rows(&mut self) -> u32 {
+        let mut rows_deleted = 0;
+        let mut new_colors: Vec<Option<Rgba>> = Vec::new();
+        let empty_row: Vec<Option<Rgba>> = vec![None; self.width as usize];
+
+        for y in 0..self.height {
+            let mut row = Vec::new();
+            let mut is_full = true;
+
+            for x in 0..self.width {
+                let i = (self.width * y + x) as usize;
+                row.push(self.colors[i].clone());
+                if self.colors[i].is_none() {
+                    is_full = false;
+                }
+            }
+
+            if is_full {
+                let mut empty = empty_row.clone();
+                empty.append(&mut new_colors);
+                new_colors = empty;
+                rows_deleted += 1;
+            } else {
+                new_colors.append(&mut row);
+            }
+        }
+
+        self.colors = new_colors;
+        rows_deleted
+    }
 }
