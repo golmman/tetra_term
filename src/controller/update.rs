@@ -14,31 +14,23 @@ const M: u64 = 2147483648;
 const A: u64 = 1103515245;
 const C: u64 = 12345;
 
-pub fn update_model(_app: &App, model: &mut Model, event: Event) -> bool {
+pub fn update_model(app: &App, model: &mut Model, event: Event) -> bool {
     match event {
         Event::Key(key) => match key {
             Key::Char('q') => return false,
             Key::Ctrl('c') => return false,
 
-            Key::Char('s') | Key::Char('j') | Key::Down => {
-                if model.tetromino.move_down() {
-                    let ps = model.tetromino.get_tetromino_points();
-                    for p in ps {
-                        let i = (model.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
-                        model.well.colors[i] = Some(Rgba::red());
-                    }
-
-                    model.well.delete_full_rows();
-
-                    model.random = (A * model.random + C) % M;
-                    model.tetromino =
-                        Tetromino::new(TetrominoKind::from(model.random), model.well.clone());
-                }
-            }
+            Key::Char('w') | Key::Char('k') | Key::Up => model.tetromino.rotate(),
             Key::Char('a') | Key::Char('h') | Key::Left => model.tetromino.move_left(),
+            Key::Char('s') | Key::Char('j') | Key::Down => move_tetromino_down(model),
             Key::Char('d') | Key::Char('l') | Key::Right => model.tetromino.move_right(),
 
-            Key::Char('w') => {
+            Key::Char(' ') => {
+                while !model.tetromino.move_down() {}
+                move_tetromino_down(model);
+            }
+
+            Key::Char('p') => {
                 model.debug += 1;
                 match model.debug % 7 {
                     0 => model.tetromino = Tetromino::new(TetrominoKind::I, model.well.clone()),
@@ -51,14 +43,35 @@ pub fn update_model(_app: &App, model: &mut Model, event: Event) -> bool {
                     _ => panic!(),
                 }
             }
-            Key::Char('r') => {
-                model.tetromino.rotate();
-            }
             _ => {}
         },
         Event::Resize(_) => {}
-        Event::Elapse => {}
+        Event::Elapse => {
+            if app.frame_count % model.gravity == 0 {
+                move_tetromino_down(model);
+            }
+        }
     };
 
     true
+}
+
+fn move_tetromino_down(model: &mut Model) {
+    if model.tetromino.move_down() {
+        // TODO: clean code
+
+        // place tetromino in well
+        let ps = model.tetromino.get_tetromino_points();
+        for p in ps {
+            let i = (model.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
+            model.well.colors[i] = Some(Rgba::red());
+        }
+
+        // delete full rows
+        model.well.delete_full_rows();
+
+        // set new tetromino
+        model.random = (A * model.random + C) % M;
+        model.tetromino = Tetromino::new(TetrominoKind::from(model.random), model.well.clone());
+    }
 }

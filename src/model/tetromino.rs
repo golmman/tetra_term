@@ -44,7 +44,7 @@ impl Tetromino {
         Self {
             color: Rgba::green(),
             kind,
-            position: Point::new(4, 3),
+            position: Point::new(WELL_LEFT + 4, WELL_TOP - 1),
             rotation: 0,
             well,
         }
@@ -251,6 +251,10 @@ impl Tetromino {
 
             if p.y >= WELL_TOP + self.well.height {
                 return true;
+            }
+
+            if p.y < WELL_TOP {
+                continue;
             }
 
             let i = (self.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
