@@ -3,6 +3,9 @@ pub mod init;
 pub mod tetromino;
 pub mod well;
 
+use std::time::SystemTime;
+use std::time::UNIX_EPOCH;
+
 use term2d::model::rgba::Rgba;
 use term2d::App;
 
@@ -34,15 +37,21 @@ impl Model {
         let well = Well::new(10, 20);
         //let well = Well::new_debug();
 
+        let random = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+        let tetromino = Tetromino::new(TetrominoKind::from(random), well.clone());
+
         Self {
             debug: 0,
             game_over: false,
             gravity: 10,
             help: false,
             pause: false,
-            random: 7,
+            random,
             score: 0,
-            tetromino: Tetromino::new(TetrominoKind::I, well.clone()),
+            tetromino,
             well,
         }
     }
