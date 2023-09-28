@@ -1,24 +1,17 @@
 pub mod constants;
 pub mod init;
+pub mod random;
 pub mod tetromino;
 pub mod well;
-
-use std::time::SystemTime;
-use std::time::UNIX_EPOCH;
 
 use term2d::model::rgba::Rgba;
 use term2d::App;
 
 use self::constants::WELL_LEFT;
 use self::constants::WELL_TOP;
+use self::random::Random;
 use self::tetromino::Tetromino;
-use self::tetromino::TetrominoKind;
 use self::well::Well;
-
-// numbers from glibc, https://en.wikipedia.org/wiki/Linear_congruential_generator
-const M: u64 = 2147483648;
-const A: u64 = 1103515245;
-const C: u64 = 12345;
 
 pub struct Model {
     pub debug: i32,
@@ -26,7 +19,7 @@ pub struct Model {
     pub gravity: u64,
     pub help: bool,
     pub pause: bool,
-    pub random: u64,
+    pub random: Random,
     pub score: u32,
     pub tetromino: Tetromino,
     pub well: Well,
@@ -37,11 +30,8 @@ impl Model {
         let well = Well::new(10, 20);
         //let well = Well::new_debug();
 
-        let random = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
-        let tetromino = Tetromino::new(TetrominoKind::from(random), well.clone());
+        let mut random = Random::new();
+        let tetromino = Tetromino::new(&mut random, well.clone());
 
         Self {
             debug: 0,
@@ -125,13 +115,21 @@ impl Model {
 
         // place tetromino in well
         let ps = self.tetromino.get_tetromino_points();
-        for p in ps {
+        for pi in 0..4 {
+            let p = &ps[pi];
             if p.y < WELL_TOP {
                 self.game_over = true;
                 return;
             }
-            let i = (self.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
-            self.well.colors[i] = Some(Rgba::red());
+            let ci = (self.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
+
+            let well_color = Rgba {
+                r: (self.tetromino.colors[pi].r as f32 * 0.66) as u8,
+                g: (self.tetromino.colors[pi].g as f32 * 0.66) as u8,
+                b: (self.tetromino.colors[pi].b as f32 * 0.66) as u8,
+                a: 255,
+            };
+            self.well.colors[ci] = Some(well_color);
         }
 
         // delete full rows
@@ -141,7 +139,6 @@ impl Model {
         self.gravity = (10 - self.score as i32 / 10).max(1) as u64;
 
         // set new tetromino
-        self.random = (A * self.random + C) % M;
-        self.tetromino = Tetromino::new(TetrominoKind::from(self.random), self.well.clone());
+        self.tetromino = Tetromino::new(&mut self.random, self.well.clone());
     }
 }

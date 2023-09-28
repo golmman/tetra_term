@@ -5,8 +5,12 @@ use term2d::view::canvas::Canvas;
 
 use super::constants::WELL_LEFT;
 use super::constants::WELL_TOP;
+use super::random::Random;
 use super::well::Well;
 
+const MIC: u8 = 64;
+
+#[derive(Clone, Copy)]
 pub enum TetrominoKind {
     I,
     J,
@@ -17,8 +21,8 @@ pub enum TetrominoKind {
     Z,
 }
 
-impl From<u64> for TetrominoKind {
-    fn from(value: u64) -> Self {
+impl From<u32> for TetrominoKind {
+    fn from(value: u32) -> Self {
         match value % 7 {
             0 => TetrominoKind::I,
             1 => TetrominoKind::J,
@@ -32,8 +36,23 @@ impl From<u64> for TetrominoKind {
     }
 }
 
+#[rustfmt::skip]
+impl From<TetrominoKind> for Rgba {
+    fn from(kind: TetrominoKind) -> Self {
+        match kind {
+            TetrominoKind::I => Rgba { r: MIC, g: 255, b: 255, a: 255 },
+            TetrominoKind::J => Rgba { r: 127, g: 127, b: 255, a: 255 },
+            TetrominoKind::L => Rgba { r: 255, g: 127, b: MIC, a: 255 },
+            TetrominoKind::O => Rgba { r: 255, g: 255, b: MIC, a: 255 },
+            TetrominoKind::S => Rgba { r: 127, g: 255, b: 127, a: 255 },
+            TetrominoKind::T => Rgba { r: 255, g: MIC, b: 127, a: 255 },
+            TetrominoKind::Z => Rgba { r: 255, g: 127, b: 127, a: 255 },
+        }
+    }
+}
+
 pub struct Tetromino {
-    color: Rgba,
+    pub colors: [Rgba; 4],
     kind: TetrominoKind,
     position: Point,
     rotation: u8,
@@ -41,14 +60,46 @@ pub struct Tetromino {
 }
 
 impl Tetromino {
-    pub fn new(kind: TetrominoKind, well: Well) -> Self {
+    pub fn new(random: &mut Random, well: Well) -> Self {
+        let kind = TetrominoKind::from(random.next());
+        let colors = Self::get_colors(kind, random);
         Self {
-            color: Rgba::green(),
+            colors,
             kind,
             position: Point::new(WELL_LEFT + 4, WELL_TOP - 1),
             rotation: 0,
             well,
         }
+    }
+
+    fn get_colors(kind: TetrominoKind, random: &mut Random) -> [Rgba; 4] {
+        let c = Rgba::from(kind);
+
+        let c0 = Rgba {
+            r: (c.r as u32 - random.next() % MIC as u32) as u8,
+            g: (c.g as u32 - random.next() % MIC as u32) as u8,
+            b: (c.b as u32 - random.next() % MIC as u32) as u8,
+            a: 255,
+        };
+        let c1 = Rgba {
+            r: (c.r as u32 - random.next() % MIC as u32) as u8,
+            g: (c.g as u32 - random.next() % MIC as u32) as u8,
+            b: (c.b as u32 - random.next() % MIC as u32) as u8,
+            a: 255,
+        };
+        let c2 = Rgba {
+            r: (c.r as u32 - random.next() % MIC as u32) as u8,
+            g: (c.g as u32 - random.next() % MIC as u32) as u8,
+            b: (c.b as u32 - random.next() % MIC as u32) as u8,
+            a: 255,
+        };
+        let c3 = Rgba {
+            r: (c.r as u32 - random.next() % MIC as u32) as u8,
+            g: (c.g as u32 - random.next() % MIC as u32) as u8,
+            b: (c.b as u32 - random.next() % MIC as u32) as u8,
+            a: 255,
+        };
+        [c0, c1, c2, c3]
     }
 
     pub fn get_tetromino_points(&self) -> [Point; 4] {
@@ -269,10 +320,10 @@ impl Tetromino {
 
     pub fn draw(&self, canvas: &mut HalfblockCanvas) {
         let ps = self.get_tetromino_points();
-        canvas.draw_pixel(&ps[0], &self.color);
-        canvas.draw_pixel(&ps[1], &self.color);
-        canvas.draw_pixel(&ps[2], &self.color);
-        canvas.draw_pixel(&ps[3], &self.color);
+        canvas.draw_pixel(&ps[0], &self.colors[0]);
+        canvas.draw_pixel(&ps[1], &self.colors[1]);
+        canvas.draw_pixel(&ps[2], &self.colors[2]);
+        canvas.draw_pixel(&ps[3], &self.colors[3]);
     }
 
     pub fn move_left(&mut self) {
