@@ -6,8 +6,10 @@ pub mod well;
 use term2d::model::rgba::Rgba;
 use term2d::App;
 
-use self::constants::{WELL_TOP, WELL_LEFT};
-use self::tetromino::{Tetromino, TetrominoKind};
+use self::constants::WELL_LEFT;
+use self::constants::WELL_TOP;
+use self::tetromino::Tetromino;
+use self::tetromino::TetrominoKind;
 use self::well::Well;
 
 // numbers from glibc, https://en.wikipedia.org/wiki/Linear_congruential_generator
@@ -53,26 +55,84 @@ impl Model {
         self.game_over || self.help || self.pause
     }
 
-    pub fn move_tetromino_down(&mut self) {
-        if self.tetromino.move_down() {
-            // TODO: clean code
-
-            // place tetromino in well
-            let ps = self.tetromino.get_tetromino_points();
-            for p in ps {
-                let i = (self.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
-                self.well.colors[i] = Some(Rgba::red());
-            }
-
-            // delete full rows
-            self.score += self.well.delete_full_rows();
-
-            // update gravity
-            self.gravity = (10 - self.score as i32 / 10).max(1) as u64;
-
-            // set new tetromino
-            self.random = (A * self.random + C) % M;
-            self.tetromino = Tetromino::new(TetrominoKind::from(self.random), self.well.clone());
+    pub fn toggle_help(&mut self) {
+        if self.game_over || self.pause {
+            return;
         }
+
+        self.help = !self.help;
+    }
+
+    pub fn toggle_pause(&mut self) {
+        if self.game_over || self.help {
+            return;
+        }
+
+        self.pause = !self.pause;
+    }
+
+    pub fn drop_tetromino(&mut self) {
+        if self.is_paused() {
+            return;
+        }
+
+        while !self.tetromino.move_down() {}
+        self.move_tetromino_down();
+    }
+
+    pub fn rotate_tetromino(&mut self) {
+        if self.is_paused() {
+            return;
+        }
+
+        self.tetromino.rotate();
+    }
+
+    pub fn move_tetromino_left(&mut self) {
+        if self.is_paused() {
+            return;
+        }
+
+        self.tetromino.move_left();
+    }
+
+    pub fn move_tetromino_right(&mut self) {
+        if self.is_paused() {
+            return;
+        }
+
+        self.tetromino.move_right();
+    }
+
+    pub fn move_tetromino_down(&mut self) {
+        if self.is_paused() {
+            return;
+        }
+
+        // TODO: clean code
+        if !self.tetromino.move_down() {
+            return;
+        }
+
+        // place tetromino in well
+        let ps = self.tetromino.get_tetromino_points();
+        for p in ps {
+            if p.y < WELL_TOP {
+                self.game_over = true;
+                return;
+            }
+            let i = (self.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
+            self.well.colors[i] = Some(Rgba::red());
+        }
+
+        // delete full rows
+        self.score += self.well.delete_full_rows();
+
+        // update gravity
+        self.gravity = (10 - self.score as i32 / 10).max(1) as u64;
+
+        // set new tetromino
+        self.random = (A * self.random + C) % M;
+        self.tetromino = Tetromino::new(TetrominoKind::from(self.random), self.well.clone());
     }
 }

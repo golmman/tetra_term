@@ -4,9 +4,9 @@ use term2d::view::canvas::halfblock::HalfblockCanvas;
 use term2d::view::canvas::Canvas;
 use term2d::App;
 
-use crate::model::Model;
 use crate::model::constants::WELL_LEFT;
 use crate::model::constants::WELL_TOP;
+use crate::model::Model;
 
 pub fn draw_model(_app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
     canvas.clear();
@@ -15,8 +15,54 @@ pub fn draw_model(_app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
     draw_score(model, canvas);
     draw_info(model, canvas);
     draw_help(model, canvas);
+    draw_pause(model, canvas);
+    draw_game_over(model, canvas);
     draw_frame(model, canvas);
     canvas.display();
+}
+
+fn draw_game_over(model: &Model, canvas: &mut HalfblockCanvas) {
+    if !model.game_over {
+        return;
+    }
+
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 8),
+        &Color::text(),
+        "GAME OVER",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 10),
+        &Color::text(),
+        "press r to",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 12),
+        &Color::text(),
+        "  reset",
+    );
+}
+
+fn draw_pause(model: &Model, canvas: &mut HalfblockCanvas) {
+    if !model.pause {
+        return;
+    }
+
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP),
+        &Color::text(),
+        "  PAUSE",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 2),
+        &Color::text(),
+        "press p to",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 4),
+        &Color::text(),
+        " continue",
+    );
 }
 
 fn draw_help(model: &Model, canvas: &mut HalfblockCanvas) {
@@ -27,25 +73,79 @@ fn draw_help(model: &Model, canvas: &mut HalfblockCanvas) {
     canvas.draw_text(
         &Point::new(WELL_LEFT, WELL_TOP),
         &Color::text(),
-        "tetra_term"
+        "tetra_term",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 2),
+        &Color::text(),
+        "----------",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 4),
+        &Color::text(),
+        "q - quit",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 6),
+        &Color::text(),
+        "w - rotate",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 8),
+        &Color::text(),
+        "a - left",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 10),
+        &Color::text(),
+        "s - down",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 12),
+        &Color::text(),
+        "d - right",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 14),
+        &Color::text(),
+        "_ - drop",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 16),
+        &Color::text(),
+        "r - reset",
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP + 18),
+        &Color::text(),
+        "p - pause",
     );
 }
 
 fn draw_info(model: &Model, canvas: &mut HalfblockCanvas) {
     canvas.draw_text(
-        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + model.well.height - 6),
+        &Point::new(
+            WELL_LEFT + model.well.width + 1,
+            WELL_TOP + model.well.height - 6,
+        ),
         &Color::text(),
-        "PRESS"
+        "PRESS",
     );
     canvas.draw_text(
-        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + model.well.height - 4),
+        &Point::new(
+            WELL_LEFT + model.well.width + 1,
+            WELL_TOP + model.well.height - 4,
+        ),
         &Color::text(),
-        "h FOR"
+        "1 FOR",
     );
     canvas.draw_text(
-        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + model.well.height - 2),
+        &Point::new(
+            WELL_LEFT + model.well.width + 1,
+            WELL_TOP + model.well.height - 2,
+        ),
         &Color::text(),
-        "HELP"
+        "HELP",
     );
 }
 
@@ -53,7 +153,7 @@ fn draw_score(model: &Model, canvas: &mut HalfblockCanvas) {
     canvas.draw_text(
         &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + 9),
         &Color::text(),
-        "SCORE"
+        "SCORE",
     );
     canvas.draw_text(
         &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + 10),

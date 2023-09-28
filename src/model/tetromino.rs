@@ -238,7 +238,7 @@ impl Tetromino {
         }
     }
 
-    fn is_collision(&self) -> bool {
+    pub fn is_collision(&self) -> bool {
         let ps = self.get_tetromino_points();
 
         for p in ps {
@@ -273,14 +273,6 @@ impl Tetromino {
         canvas.draw_pixel(&ps[1], &self.color);
         canvas.draw_pixel(&ps[2], &self.color);
         canvas.draw_pixel(&ps[3], &self.color);
-    }
-
-    pub fn drop(&mut self) {
-        todo!()
-    }
-
-    pub fn is_falling(&self) -> bool {
-        true
     }
 
     pub fn move_left(&mut self) {
