@@ -1,18 +1,10 @@
 use term2d::model::event::Event;
 use term2d::model::key::Key;
-use term2d::model::rgba::Rgba;
 use term2d::App;
 
-use crate::model::constants::WELL_LEFT;
-use crate::model::constants::WELL_TOP;
-use crate::model::init::Model;
+use crate::model::Model;
 use crate::model::tetromino::Tetromino;
 use crate::model::tetromino::TetrominoKind;
-
-// numbers from glibc, https://en.wikipedia.org/wiki/Linear_congruential_generator
-const M: u64 = 2147483648;
-const A: u64 = 1103515245;
-const C: u64 = 12345;
 
 pub fn update_model(app: &App, model: &mut Model, event: Event) -> bool {
     match event {
@@ -22,17 +14,18 @@ pub fn update_model(app: &App, model: &mut Model, event: Event) -> bool {
 
             Key::Char('w') | Key::Char('k') | Key::Up => model.tetromino.rotate(),
             Key::Char('a') | Key::Char('h') | Key::Left => model.tetromino.move_left(),
-            Key::Char('s') | Key::Char('j') | Key::Down => move_tetromino_down(model),
+            Key::Char('s') | Key::Char('j') | Key::Down => model.move_tetromino_down(),
             Key::Char('d') | Key::Char('l') | Key::Right => model.tetromino.move_right(),
 
             Key::Char(' ') => {
                 while !model.tetromino.move_down() {}
-                move_tetromino_down(model);
+                model.move_tetromino_down();
             }
 
-            Key::Char('R') => model.reset(app),
+            Key::Char('r') => model.reset(app),
+            Key::Char('1') => model.help = !model.help,
 
-            Key::Char('p') => {
+            Key::Char('o') => {
                 model.debug += 1;
                 match model.debug % 7 {
                     0 => model.tetromino = Tetromino::new(TetrominoKind::I, model.well.clone()),
@@ -50,33 +43,10 @@ pub fn update_model(app: &App, model: &mut Model, event: Event) -> bool {
         Event::Resize(_) => {}
         Event::Elapse => {
             if app.frame_count % model.gravity == 0 {
-                move_tetromino_down(model);
+                model.move_tetromino_down();
             }
         }
     };
 
     true
-}
-
-fn move_tetromino_down(model: &mut Model) {
-    if model.tetromino.move_down() {
-        // TODO: clean code
-
-        // place tetromino in well
-        let ps = model.tetromino.get_tetromino_points();
-        for p in ps {
-            let i = (model.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
-            model.well.colors[i] = Some(Rgba::red());
-        }
-
-        // delete full rows
-        model.score += model.well.delete_full_rows();
-
-        // update gravity
-        model.gravity = (10 - model.score as i32 / 10).max(1) as u64;
-
-        // set new tetromino
-        model.random = (A * model.random + C) % M;
-        model.tetromino = Tetromino::new(TetrominoKind::from(model.random), model.well.clone());
-    }
 }

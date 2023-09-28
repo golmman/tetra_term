@@ -1,9 +1,10 @@
 use term2d::model::point::Point;
 use term2d::model::rgba::Rgba;
-use term2d::view::canvas::Canvas;
 use term2d::view::canvas::halfblock::HalfblockCanvas;
+use term2d::view::canvas::Canvas;
 
-use super::constants::{WELL_LEFT, WELL_TOP};
+use super::constants::WELL_LEFT;
+use super::constants::WELL_TOP;
 use super::well::Well;
 
 pub enum TetrominoKind {

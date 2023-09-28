@@ -4,17 +4,49 @@ use term2d::view::canvas::halfblock::HalfblockCanvas;
 use term2d::view::canvas::Canvas;
 use term2d::App;
 
+use crate::model::Model;
 use crate::model::constants::WELL_LEFT;
 use crate::model::constants::WELL_TOP;
-use crate::model::init::Model;
 
 pub fn draw_model(_app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
     canvas.clear();
     draw_well(model, canvas);
     draw_tetromino(model, canvas);
     draw_score(model, canvas);
+    draw_info(model, canvas);
+    draw_help(model, canvas);
     draw_frame(model, canvas);
     canvas.display();
+}
+
+fn draw_help(model: &Model, canvas: &mut HalfblockCanvas) {
+    if !model.help {
+        return;
+    }
+
+    canvas.draw_text(
+        &Point::new(WELL_LEFT, WELL_TOP),
+        &Color::text(),
+        "tetra_term"
+    );
+}
+
+fn draw_info(model: &Model, canvas: &mut HalfblockCanvas) {
+    canvas.draw_text(
+        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + model.well.height - 6),
+        &Color::text(),
+        "PRESS"
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + model.well.height - 4),
+        &Color::text(),
+        "h FOR"
+    );
+    canvas.draw_text(
+        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + model.well.height - 2),
+        &Color::text(),
+        "HELP"
+    );
 }
 
 fn draw_score(model: &Model, canvas: &mut HalfblockCanvas) {
