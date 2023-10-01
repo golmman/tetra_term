@@ -5,4 +5,3 @@
 
 ideas for term2d
 * optimize pixels where top and bottom (front and back) have the same color
-* implement panic hook and print panic messages after screen destruction
