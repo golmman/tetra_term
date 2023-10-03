@@ -8,7 +8,7 @@ use super::constants::WELL_TOP;
 use super::random::Random;
 use super::well::Well;
 
-const MIC: u8 = 64;
+const MCV: u8 = 64; // min color value
 
 #[derive(Clone, Copy)]
 pub enum TetrominoKind {
@@ -40,27 +40,27 @@ impl From<u32> for TetrominoKind {
 impl From<TetrominoKind> for Rgba {
     fn from(kind: TetrominoKind) -> Self {
         match kind {
-            TetrominoKind::I => Rgba { r: MIC, g: 255, b: 255, a: 255 },
+            TetrominoKind::I => Rgba { r: MCV, g: 255, b: 255, a: 255 },
             TetrominoKind::J => Rgba { r: 127, g: 127, b: 255, a: 255 },
-            TetrominoKind::L => Rgba { r: 255, g: 127, b: MIC, a: 255 },
-            TetrominoKind::O => Rgba { r: 255, g: 255, b: MIC, a: 255 },
+            TetrominoKind::L => Rgba { r: 255, g: 127, b: MCV, a: 255 },
+            TetrominoKind::O => Rgba { r: 255, g: 255, b: MCV, a: 255 },
             TetrominoKind::S => Rgba { r: 127, g: 255, b: 127, a: 255 },
-            TetrominoKind::T => Rgba { r: 255, g: MIC, b: 127, a: 255 },
+            TetrominoKind::T => Rgba { r: 255, g: MCV, b: 127, a: 255 },
             TetrominoKind::Z => Rgba { r: 255, g: 127, b: 127, a: 255 },
         }
     }
 }
 
+#[derive(Clone)]
 pub struct Tetromino {
     pub colors: [Rgba; 4],
-    kind: TetrominoKind,
+    pub kind: TetrominoKind,
     position: Point,
     rotation: u8,
-    well: Well,
 }
 
 impl Tetromino {
-    pub fn new(random: &mut Random, well: Well) -> Self {
+    pub fn new(random: &mut Random) -> Self {
         let kind = TetrominoKind::from(random.next());
         let colors = Self::get_colors(kind, random);
         Self {
@@ -68,7 +68,6 @@ impl Tetromino {
             kind,
             position: Point::new(WELL_LEFT + 4, WELL_TOP - 1),
             rotation: 0,
-            well,
         }
     }
 
@@ -76,27 +75,27 @@ impl Tetromino {
         let c = Rgba::from(kind);
 
         let c0 = Rgba {
-            r: (c.r as u32 - random.next() % MIC as u32) as u8,
-            g: (c.g as u32 - random.next() % MIC as u32) as u8,
-            b: (c.b as u32 - random.next() % MIC as u32) as u8,
+            r: (c.r as u32 - random.next() % MCV as u32) as u8,
+            g: (c.g as u32 - random.next() % MCV as u32) as u8,
+            b: (c.b as u32 - random.next() % MCV as u32) as u8,
             a: 255,
         };
         let c1 = Rgba {
-            r: (c.r as u32 - random.next() % MIC as u32) as u8,
-            g: (c.g as u32 - random.next() % MIC as u32) as u8,
-            b: (c.b as u32 - random.next() % MIC as u32) as u8,
+            r: (c.r as u32 - random.next() % MCV as u32) as u8,
+            g: (c.g as u32 - random.next() % MCV as u32) as u8,
+            b: (c.b as u32 - random.next() % MCV as u32) as u8,
             a: 255,
         };
         let c2 = Rgba {
-            r: (c.r as u32 - random.next() % MIC as u32) as u8,
-            g: (c.g as u32 - random.next() % MIC as u32) as u8,
-            b: (c.b as u32 - random.next() % MIC as u32) as u8,
+            r: (c.r as u32 - random.next() % MCV as u32) as u8,
+            g: (c.g as u32 - random.next() % MCV as u32) as u8,
+            b: (c.b as u32 - random.next() % MCV as u32) as u8,
             a: 255,
         };
         let c3 = Rgba {
-            r: (c.r as u32 - random.next() % MIC as u32) as u8,
-            g: (c.g as u32 - random.next() % MIC as u32) as u8,
-            b: (c.b as u32 - random.next() % MIC as u32) as u8,
+            r: (c.r as u32 - random.next() % MCV as u32) as u8,
+            g: (c.g as u32 - random.next() % MCV as u32) as u8,
+            b: (c.b as u32 - random.next() % MCV as u32) as u8,
             a: 255,
         };
         [c0, c1, c2, c3]
@@ -289,7 +288,7 @@ impl Tetromino {
         }
     }
 
-    pub fn is_collision(&self) -> bool {
+    pub fn is_collision(&self, well: &Well) -> bool {
         let ps = self.get_tetromino_points();
 
         for p in ps {
@@ -297,11 +296,11 @@ impl Tetromino {
                 return true;
             }
 
-            if p.x >= WELL_LEFT + self.well.width {
+            if p.x >= WELL_LEFT + well.width {
                 return true;
             }
 
-            if p.y >= WELL_TOP + self.well.height {
+            if p.y >= WELL_TOP + well.height {
                 return true;
             }
 
@@ -309,13 +308,21 @@ impl Tetromino {
                 continue;
             }
 
-            let i = (self.well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
-            if self.well.colors[i].is_some() {
+            let i = (well.width * (p.y - WELL_TOP) + (p.x - WELL_LEFT)) as usize;
+            if well.colors[i].is_some() {
                 return true;
             }
         }
 
         false
+    }
+
+    pub fn draw_at(&self, canvas: &mut HalfblockCanvas, p: &Point) {
+        let ps = self.get_tetromino_points();
+        canvas.draw_pixel(&(&ps[0] - &self.position + p), &self.colors[0]);
+        canvas.draw_pixel(&(&ps[1] - &self.position + p), &self.colors[1]);
+        canvas.draw_pixel(&(&ps[2] - &self.position + p), &self.colors[2]);
+        canvas.draw_pixel(&(&ps[3] - &self.position + p), &self.colors[3]);
     }
 
     pub fn draw(&self, canvas: &mut HalfblockCanvas) {
@@ -326,23 +333,23 @@ impl Tetromino {
         canvas.draw_pixel(&ps[3], &self.colors[3]);
     }
 
-    pub fn move_left(&mut self) {
+    pub fn move_left(&mut self, well: &Well) {
         self.position.x -= 1;
-        if self.is_collision() {
+        if self.is_collision(well) {
             self.position.x += 1;
         }
     }
 
-    pub fn move_right(&mut self) {
+    pub fn move_right(&mut self, well: &Well) {
         self.position.x += 1;
-        if self.is_collision() {
+        if self.is_collision(well) {
             self.position.x -= 1;
         }
     }
 
-    pub fn move_down(&mut self) -> bool {
+    pub fn move_down(&mut self, well: &Well) -> bool {
         self.position.y += 1;
-        if self.is_collision() {
+        if self.is_collision(well) {
             self.position.y -= 1;
             return true;
         }
@@ -350,7 +357,7 @@ impl Tetromino {
         false
     }
 
-    pub fn rotate(&mut self) {
+    pub fn rotate(&mut self, well: &Well) {
         let old_rotation = self.rotation;
 
         self.rotation += 1;
@@ -358,7 +365,7 @@ impl Tetromino {
             self.rotation = 0;
         }
 
-        if self.is_collision() {
+        if self.is_collision(well) {
             self.rotation = old_rotation;
         }
     }

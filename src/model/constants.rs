@@ -10,5 +10,5 @@ const HEX_BACKGROUND: &'static str = "240d35";
 pub const RGBA_BACKGROUND: Rgba = Rgba::from_hex(HEX_BACKGROUND);
 pub const COLOR_TEXT: Color = Color {
     bg: Rgba::from_hex(HEX_BACKGROUND),
-    fg: Rgba::new(200, 200, 180, 255),
+    fg: Rgba::new(160, 160, 140, 255),
 };

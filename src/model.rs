@@ -22,6 +22,7 @@ pub struct Model {
     pub random: Random,
     pub score: u32,
     pub tetromino: Tetromino,
+    pub tetromino_next: Tetromino,
     pub well: Well,
 }
 
@@ -31,7 +32,8 @@ impl Model {
         //let well = Well::new_debug();
 
         let mut random = Random::new();
-        let tetromino = Tetromino::new(&mut random, well.clone());
+        let tetromino = Tetromino::new(&mut random);
+        let tetromino_next = Tetromino::new(&mut random);
 
         Self {
             debug: 0,
@@ -42,6 +44,7 @@ impl Model {
             random,
             score: 0,
             tetromino,
+            tetromino_next,
             well,
         }
     }
@@ -75,7 +78,7 @@ impl Model {
             return;
         }
 
-        while !self.tetromino.move_down() {}
+        while !self.tetromino.move_down(&self.well) {}
         self.move_tetromino_down();
     }
 
@@ -84,7 +87,7 @@ impl Model {
             return;
         }
 
-        self.tetromino.rotate();
+        self.tetromino.rotate(&self.well);
     }
 
     pub fn move_tetromino_left(&mut self) {
@@ -92,7 +95,7 @@ impl Model {
             return;
         }
 
-        self.tetromino.move_left();
+        self.tetromino.move_left(&self.well);
     }
 
     pub fn move_tetromino_right(&mut self) {
@@ -100,7 +103,7 @@ impl Model {
             return;
         }
 
-        self.tetromino.move_right();
+        self.tetromino.move_right(&self.well);
     }
 
     pub fn move_tetromino_down(&mut self) {
@@ -109,7 +112,7 @@ impl Model {
         }
 
         // TODO: clean code
-        if !self.tetromino.move_down() {
+        if !self.tetromino.move_down(&self.well) {
             return;
         }
 
@@ -139,6 +142,8 @@ impl Model {
         self.gravity = (10 - self.score as i32 / 10).max(1) as u64;
 
         // set new tetromino
-        self.tetromino = Tetromino::new(&mut self.random, self.well.clone());
+        //self.tetromino = Tetromino::new(&mut self.random);
+        self.tetromino = self.tetromino_next.clone();
+        self.tetromino_next = Tetromino::new(&mut self.random);
     }
 }

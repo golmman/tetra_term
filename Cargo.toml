@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-term2d = "0.8.1"
+term2d = "0.8.2"

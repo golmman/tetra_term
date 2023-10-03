@@ -16,6 +16,7 @@ pub fn draw_model(_app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
     draw_background(model, canvas);
     draw_well(model, canvas);
     draw_tetromino(model, canvas);
+    draw_tetromino_next(model, canvas);
     draw_score(model, canvas);
     draw_info(model, canvas);
     draw_help(model, canvas);
@@ -23,6 +24,18 @@ pub fn draw_model(_app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
     draw_game_over(model, canvas);
     draw_frame(model, canvas);
     canvas.display();
+}
+
+fn draw_tetromino_next(model: &Model, canvas: &mut HalfblockCanvas) {
+    canvas.draw_text(
+        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP),
+        &COLOR_TEXT,
+        "NEXT",
+    );
+
+    let left = WELL_LEFT + model.well.width + 3;
+    let top = WELL_TOP + 4;
+    model.tetromino_next.draw_at(canvas, &Point::new(left, top));
 }
 
 fn draw_background(model: &Model, canvas: &mut HalfblockCanvas) {
@@ -80,11 +93,7 @@ fn draw_help(model: &Model, canvas: &mut HalfblockCanvas) {
         return;
     }
 
-    canvas.draw_text(
-        &Point::new(WELL_LEFT, WELL_TOP),
-        &COLOR_TEXT,
-        "tetra_term",
-    );
+    canvas.draw_text(&Point::new(WELL_LEFT, WELL_TOP), &COLOR_TEXT, "tetra_term");
     canvas.draw_text(
         &Point::new(WELL_LEFT, WELL_TOP + 2),
         &COLOR_TEXT,
