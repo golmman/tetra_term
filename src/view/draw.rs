@@ -145,14 +145,6 @@ fn draw_info(model: &Model, canvas: &mut HalfblockCanvas) {
     canvas.draw_text(
         &Point::new(
             WELL_LEFT + model.well.width + 1,
-            WELL_TOP + model.well.height - 6,
-        ),
-        &COLOR_TEXT,
-        "PRESS",
-    );
-    canvas.draw_text(
-        &Point::new(
-            WELL_LEFT + model.well.width + 1,
             WELL_TOP + model.well.height - 4,
         ),
         &COLOR_TEXT,
@@ -170,12 +162,12 @@ fn draw_info(model: &Model, canvas: &mut HalfblockCanvas) {
 
 fn draw_score(model: &Model, canvas: &mut HalfblockCanvas) {
     canvas.draw_text(
-        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + 9),
+        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + 10),
         &COLOR_TEXT,
         "SCORE",
     );
     canvas.draw_text(
-        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + 10),
+        &Point::new(WELL_LEFT + model.well.width + 1, WELL_TOP + 12),
         &COLOR_TEXT,
         &format!("{:0>5}", model.score),
     );
@@ -192,12 +184,20 @@ fn draw_frame(model: &Model, canvas: &mut HalfblockCanvas) {
     let h = model.well.height;
     let color_text = &COLOR_TEXT;
 
-    for x in 1..w + INFO_WIDTH + 2 {
+    // top and bottom horizontal line
+    for x in WELL_LEFT..w + INFO_WIDTH + WELL_LEFT + 1 {
         canvas.draw_char(&Point::new(x, 0), color_text, '\u{2500}');
         canvas.draw_char(&Point::new(x, h + 3), color_text, '\u{2500}');
     }
 
-    for y in 1..h / 2 + 1 {
+    // info area horizontal lines
+    for x in WELL_LEFT + w..w + INFO_WIDTH + WELL_LEFT + 1 {
+        canvas.draw_char(&Point::new(x, 10), color_text, '\u{2500}');
+        canvas.draw_char(&Point::new(x, 16), color_text, '\u{2500}');
+    }
+
+    // left, mid and right vertical line
+    for y in WELL_TOP / 2..h / 2 + 1 {
         canvas.draw_char(&Point::new(0, y * 2), color_text, '\u{2502}');
         canvas.draw_char(&Point::new(w + 1, y * 2), color_text, '\u{2502}');
         canvas.draw_char(
@@ -207,12 +207,15 @@ fn draw_frame(model: &Model, canvas: &mut HalfblockCanvas) {
         );
     }
 
+    // top left and right corners
     canvas.draw_char(&Point::new(0, 0), color_text, '\u{250C}');
     canvas.draw_char(&Point::new(w + INFO_WIDTH + 2, 0), color_text, '\u{2510}');
 
+    // mid T-corners
     canvas.draw_char(&Point::new(w + 1, 0), color_text, '\u{252C}');
     canvas.draw_char(&Point::new(w + 1, h + 3), color_text, '\u{2534}');
 
+    // bottom left and right corners
     canvas.draw_char(&Point::new(0, h + 3), color_text, '\u{2514}');
     canvas.draw_char(
         &Point::new(w + INFO_WIDTH + 2, h + 3),
