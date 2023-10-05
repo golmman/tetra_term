@@ -14,6 +14,7 @@ use self::tetromino::Tetromino;
 use self::well::Well;
 
 pub struct Model {
+    pub clear_at_frame_count: u64,
     pub debug: i32,
     pub game_over: bool,
     pub gravity: u64,
@@ -29,13 +30,13 @@ pub struct Model {
 impl Model {
     pub fn new(_app: &App) -> Self {
         let well = Well::new(10, 20);
-        //let well = Well::new_debug();
 
         let mut random = Random::new();
         let tetromino = Tetromino::new(&mut random);
         let tetromino_next = Tetromino::new(&mut random);
 
         Self {
+            clear_at_frame_count: 0,
             debug: 0,
             game_over: false,
             gravity: 10,
@@ -51,6 +52,16 @@ impl Model {
 
     pub fn reset(&mut self, app: &App) {
         *self = Self::new(app);
+    }
+
+    pub fn set_clear_at_frame_count(&mut self, frame_count: u64) {
+        self.clear_at_frame_count = frame_count;
+    }
+
+    pub fn elapse(&mut self, frame_count: u64) {
+        if frame_count % self.gravity == 0 {
+            self.move_tetromino_down();
+        }
     }
 
     pub fn is_paused(&self) -> bool {
@@ -111,11 +122,11 @@ impl Model {
             return;
         }
 
-        // TODO: clean code
         if !self.tetromino.move_down(&self.well) {
             return;
         }
 
+        // TODO: clean code, outsource?
         // place tetromino in well
         let ps = self.tetromino.get_tetromino_points();
         for pi in 0..4 {
@@ -138,11 +149,11 @@ impl Model {
         // delete full rows
         self.score += self.well.delete_full_rows();
 
+        // TODO: replace '10' with fps
         // update gravity
         self.gravity = (10 - self.score as i32 / 10).max(1) as u64;
 
         // set new tetromino
-        //self.tetromino = Tetromino::new(&mut self.random);
         self.tetromino = self.tetromino_next.clone();
         self.tetromino_next = Tetromino::new(&mut self.random);
     }

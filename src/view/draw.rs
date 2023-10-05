@@ -11,8 +11,9 @@ use crate::model::constants::WELL_LEFT;
 use crate::model::constants::WELL_TOP;
 use crate::model::Model;
 
-pub fn draw_model(_app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
-    //canvas.clear();
+pub fn draw_model(app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
+    clear_canvas(app.frame_count, model, canvas);
+
     draw_background(model, canvas);
     draw_well(model, canvas);
     draw_tetromino(model, canvas);
@@ -23,7 +24,14 @@ pub fn draw_model(_app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
     draw_pause(model, canvas);
     draw_game_over(model, canvas);
     draw_frame(model, canvas);
+
     canvas.display();
+}
+
+fn clear_canvas(frame_count: u64, model: &Model, canvas: &mut HalfblockCanvas) {
+    if frame_count == model.clear_at_frame_count {
+        canvas.clear();
+    }
 }
 
 fn draw_tetromino_next(model: &Model, canvas: &mut HalfblockCanvas) {
