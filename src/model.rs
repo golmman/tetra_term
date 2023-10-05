@@ -152,7 +152,7 @@ impl Model {
         self.score += self.well.delete_full_rows();
 
         // update gravity
-        self.gravity = (self.fps - self.score as i32 / self.fps).max(1) as u64;
+        self.gravity = (self.fps as i32 - self.score as i32 / self.fps as i32).max(1) as u64;
 
         // set new tetromino
         self.tetromino = self.tetromino_next.clone();

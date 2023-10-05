@@ -15,7 +15,7 @@ pub fn draw_model(app: &App, model: &Model, canvas: &mut HalfblockCanvas) {
     clear_canvas(app.frame_count, model, canvas);
 
     draw_background(model, canvas);
-    draw_well(model, canvas);
+    draw_well_background(model, canvas);
     draw_tetromino(model, canvas);
     draw_tetromino_next(model, canvas);
     draw_score(model, canvas);
@@ -232,7 +232,7 @@ fn draw_frame(model: &Model, canvas: &mut HalfblockCanvas) {
     );
 }
 
-fn draw_well(model: &Model, canvas: &mut HalfblockCanvas) {
+fn draw_well_background(model: &Model, canvas: &mut HalfblockCanvas) {
     for y in 0..model.well.height {
         for x in 0..model.well.width {
             let i = (model.well.width * y + x) as usize;
