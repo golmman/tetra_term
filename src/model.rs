@@ -16,6 +16,7 @@ use self::well::Well;
 pub struct Model {
     pub clear_at_frame_count: u64,
     pub debug: i32,
+    pub fps: u32,
     pub game_over: bool,
     pub gravity: u64,
     pub help: bool,
@@ -28,7 +29,7 @@ pub struct Model {
 }
 
 impl Model {
-    pub fn new(_app: &App) -> Self {
+    pub fn new(app: &App) -> Self {
         let well = Well::new(10, 20);
 
         let mut random = Random::new();
@@ -38,6 +39,7 @@ impl Model {
         Self {
             clear_at_frame_count: 0,
             debug: 0,
+            fps: app.config.fps,
             game_over: false,
             gravity: 10,
             help: false,
@@ -149,9 +151,8 @@ impl Model {
         // delete full rows
         self.score += self.well.delete_full_rows();
 
-        // TODO: replace '10' with fps
         // update gravity
-        self.gravity = (10 - self.score as i32 / 10).max(1) as u64;
+        self.gravity = (self.fps - self.score as i32 / self.fps).max(1) as u64;
 
         // set new tetromino
         self.tetromino = self.tetromino_next.clone();
