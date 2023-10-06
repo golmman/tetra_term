@@ -2,6 +2,8 @@
 
 Play tetris inside your terminal!
 
+![](pic.png)
+
 ## Quick Start
 
 If you just want to try it out run the following commands in your terminal:
@@ -15,10 +17,10 @@ cargo run
 
 Explanation:
 
-1. [install Rust](https://www.rust-lang.org/tools/install)
+1. [Install Rust](https://www.rust-lang.org/tools/install)
 2. Clone this repository
 3. Switch directory
-4. Run the application with Rust's package manager
+4. Build and run the application with Rust's package manager
 
 ## Installation
 
